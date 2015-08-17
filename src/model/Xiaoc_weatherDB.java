@@ -14,7 +14,7 @@ public class Xiaoc_weatherDB {
 	/**
 	 * 数据库名
 	 */
-	public static final String DB_NAME = "cool_weather"; 
+	public static final String DB_NAME = "xiaoc_weather"; 
 	
 	/**  
 	 *
@@ -22,7 +22,9 @@ public class Xiaoc_weatherDB {
 	 */
 	public static final int VERSION = 1; 
 	
-	private static Xiaoc_weatherDB Xiaoc_weatherDB;
+	private static Xiaoc_weatherDB xiaoc_weatherDB;
+
+	
 	
 	private SQLiteDatabase db;
 	
@@ -30,10 +32,25 @@ public class Xiaoc_weatherDB {
 	 * 将构造方法私有化		
 	 */
 	private Xiaoc_weatherDB(Context context){
-		Xiaoc_weatherOpenHelper dbHelper =new Xiaoc_weatherOpenHelper(context,DB_NAME,null,VERSION);
+		Xiaoc_weatherOpenHelper dbHelper =new Xiaoc_weatherOpenHelper(context,
+				DB_NAME,null,VERSION);
 		db =dbHelper.getWritableDatabase();
 		
 	}
+	/**
+	 * 获取Xiaoc_weatherDB实例。
+	 */
+	public synchronized static Xiaoc_weatherDB getInstance(Context context){
+		
+		if (xiaoc_weatherDB ==null){
+			xiaoc_weatherDB= new Xiaoc_weatherDB(context);
+		}
+		return xiaoc_weatherDB;
+		
+		
+	}
+	
+	
 	/**
 	 * 将Province实例储存到数据库
 	 */
@@ -57,8 +74,10 @@ public class Xiaoc_weatherDB {
 			do{
 				Province province =new Province ();
 				province.setId(cursor.getInt(cursor.getColumnIndex("id")));
-				province.setProvinceName(cursor.getString(cursor.getColumnIndex("province_name")));
-				province.setProvinceCode(cursor.getString(cursor.getColumnIndex("province_code")));
+				province.setProvinceName(cursor
+						.getString(cursor.getColumnIndex("province_name")));
+				province.setProvinceCode(cursor
+						.getString(cursor.getColumnIndex("province_code")));
 					list.add(province);
 			}while(cursor.moveToNext());
 		}
@@ -87,15 +106,17 @@ public class Xiaoc_weatherDB {
 			do{
 				City city = new City(); 
 				city.setId(cursor.getInt(cursor.getColumnIndex("id"))); 
-				city.setCityName(cursor.getString(cursor.getColumnIndex("city_name")));
-				city.setCityCode(cursor.getString(cursor.getColumnIndex("city_code"))); 
+				city.setCityName(cursor.getString(cursor
+						.getColumnIndex("city_name")));
+				city.setCityCode(cursor.getString(cursor
+						.getColumnIndex("city_code"))); 
 				city.setProvinceId(provinceId); 
 				list.add(city);   
 				} while (cursor.moveToNext()); 
 		}
 		return list;
 	}
-	
+	 
 	
 	/**
 	 * 将County实例存储到数据库。
@@ -122,15 +143,17 @@ public class Xiaoc_weatherDB {
 			do{
 				County county = new County();
 				county.setCityId(cursor.getInt(cursor.getColumnIndex("id")));
-				county.setCountyName(cursor.getString(cursor.getColumnIndex("county_name"))); 
-				county.setCountyCode(cursor.getString(cursor       .getColumnIndex("county_code"))); 
+				county.setCountyName(cursor.getString(cursor
+						.getColumnIndex("county_name"))); 
+				county.setCountyCode(cursor.getString(cursor   
+						.getColumnIndex("county_code"))); 
 				county.setCityId(cityId); 
 				list.add(county);
 				} while (cursor.moveToNext()); 	
 		}  
 		return list; 
 				
-			}
-		}
-	
+	}
+
+}
 
