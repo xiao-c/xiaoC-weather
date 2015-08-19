@@ -41,9 +41,6 @@ public class HttpUtil {
 							if (connection != null) {  
 								connection.disconnect(); 
 					}
-					
-					
-					
 			}
 		}
 	}).start();
@@ -51,12 +48,3 @@ public class HttpUtil {
 	}
 
 }
-
-
-
-
-
-
-
-
-

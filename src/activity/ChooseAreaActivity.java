@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.example.xiaoc_weather.R;
 
+import db.Xiaoc_weatherDB;
+
 import util.HttpCallbackListener;
 import util.HttpUtil;
 import util.Utility;
@@ -12,11 +14,13 @@ import util.Utility;
 import model.City;
 import model.County;
 import model.Province;
-import model.Xiaoc_weatherDB;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -37,6 +41,10 @@ import android.widget.Toast;
 		private ArrayAdapter<String> adapter; 
 		private Xiaoc_weatherDB xiaoc_weatherDB;
 		private List<String> dataList = new ArrayList<String>();
+		/**
+		 * 是否从WeatherActivity中跳转过来。
+		 */
+		private boolean isFromWeatherActivity;
 		/** 
 		 *  省列表 
 		 */ 
@@ -64,6 +72,17 @@ import android.widget.Toast;
 		 @Override  
 		 protected void onCreate(Bundle savedInstanceState) { 
 			 super.onCreate(savedInstanceState); 
+			 isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
+			 
+			 SharedPreferences prefs = PreferenceManager.
+		getDefaultSharedPreferences(this);
+			 //已经选择了城市且不是从WeatherActivity跳转过来，才会直接跳转到WeatherActivity
+			 if(prefs.getBoolean("city_selected",false)&&!isFromWeatherActivity){
+				 Intent intent = new Intent(this,WeatherActivity.class);
+				 startActivity(intent);
+				 finish();
+				 return;
+			 }
 			 
 			 requestWindowFeature(Window.FEATURE_NO_TITLE);
 			 
@@ -88,7 +107,13 @@ import android.widget.Toast;
 						 }  else if (currentLevel == LEVEL_CITY) { 
 						selectedCity = cityList.get(index); 
 						queryCounties();   
-							 }  
+					     }else if(currentLevel == LEVEL_COUNTY){
+					    	 String countyCode = countyList.get(index).getCountyCode();
+					    	 Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+					    	 intent.putExtra("county_code", countyCode);
+					    	 startActivity(intent);
+					    	 finish();
+					     }
 					 }  
 				 });   
 			 queryProvinces();  // 加载省级数据  }  
@@ -100,7 +125,8 @@ import android.widget.Toast;
 			 
 			 private void queryProvinces() { 
 				 provinceList = xiaoc_weatherDB.loadProvinces(); 
-				 if (provinceList.size() > 0) {    dataList.clear();
+				 if (provinceList.size() > 0) {   
+					 dataList.clear();
 				 for (Province province : provinceList) {  
 					 dataList.add(province.getProvinceName()); 
 					 }    
@@ -160,9 +186,9 @@ import android.widget.Toast;
 			 private void queryFromServer(final String code ,final String type) {  
 				 String address; 	 
 				 if (!TextUtils.isEmpty(code)) {  
-					 address = "http://www.weather.com.cn/data/list3/city" + code + ".html";    
+					 address = "http://www.weather.com.cn/data/list3/city" + code + ".xml";    
 				 } else { 
-					 address = "http://www.weather.com.cn/data/list3/city.html"; 
+					 address = "http://www.weather.com.cn/data/list3/city.xml"; 
 				 }
 				 showProgressDialog(); 
 				 HttpUtil.sendHttpRequest(address, new HttpCallbackListener() { 
@@ -190,7 +216,7 @@ import android.widget.Toast;
 											 queryCities();     
 											 } else if ("county".equals(type)) {
 												 queryCounties();   
-												 }     
+											 }     
 									 } 
 								 }); 
 							 } 
@@ -209,12 +235,6 @@ import android.widget.Toast;
 					   } 
 				   });
 				 }   
-						 
-
-
-	
-
-
 				/**
 				 * 显示进度对话框 		 
 				 */
@@ -243,18 +263,11 @@ import android.widget.Toast;
 				 } else if (currentLevel == LEVEL_CITY) {   
 					 queryProvinces();  
 					 } else {  
+						 if(isFromWeatherActivity){
+							 Intent intent = new Intent (this,WeatherActivity.class);
+							 startActivity(intent);
+						 }
 						 finish(); 
-						 } 
-			 }  
-	}	 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
+		 } 
+	 }  
+	}	 	 
