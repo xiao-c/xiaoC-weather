@@ -57,7 +57,7 @@ public class Xiaoc_weatherDB {
 	public void saveProvince(Province province){
 		if (province !=null){
 			ContentValues values =new ContentValues();
-			values.put("provinc_name", province.getProvinceName());
+			values.put("province_name", province.getProvinceName());
 			values.put("province_code", province.getProvinceCode());
 			db.insert("province", null, values);
 			}
@@ -126,8 +126,8 @@ public class Xiaoc_weatherDB {
 		if (county !=null){
 			ContentValues values =new ContentValues();
 			values.put("county_name", county.getCountyName());
-			values.put("county_code", county.getCountyName());
-			values.put("county_id", county.getCountyName());
+			values.put("county_code", county.getCountyCode());
+			values.put("city_id", county.getCityId());
 			db.insert("County", null, values);
 			
 		}

@@ -77,7 +77,7 @@ import android.widget.Toast;
 			 SharedPreferences prefs = PreferenceManager.
 		getDefaultSharedPreferences(this);
 			 //已经选择了城市且不是从WeatherActivity跳转过来，才会直接跳转到WeatherActivity
-			 if(prefs.getBoolean("city_selected",false)&&!isFromWeatherActivity){
+			 if(prefs.getBoolean("city_selected",false)&& !isFromWeatherActivity){
 				 Intent intent = new Intent(this,WeatherActivity.class);
 				 startActivity(intent);
 				 finish();
@@ -109,7 +109,8 @@ import android.widget.Toast;
 						queryCounties();   
 					     }else if(currentLevel == LEVEL_COUNTY){
 					    	 String countyCode = countyList.get(index).getCountyCode();
-					    	 Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+					    	 Intent intent = new Intent(ChooseAreaActivity.this,
+					    			 WeatherActivity.class);
 					    	 intent.putExtra("county_code", countyCode);
 					    	 startActivity(intent);
 					    	 finish();

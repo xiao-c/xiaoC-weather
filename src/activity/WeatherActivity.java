@@ -96,7 +96,7 @@ public class WeatherActivity extends Activity implements OnClickListener{
 	}
 	public void onClick(View v) { 
 		switch (v.getId()) { 
-		case R.id.publish_text: 
+		case R.id.switch_city: 
 			Intent intent = new Intent(this, ChooseAreaActivity.class); 
 			intent.putExtra("from_weather_activity", true); 
 			startActivity(intent); 
@@ -104,14 +104,12 @@ public class WeatherActivity extends Activity implements OnClickListener{
 			break;  
 		case R.id.refresh_weather:
 			publishText.setText("同步中..."); 
-			SharedPreferences prefs = PreferenceManager. 
-	getDefaultSharedPreferences(this);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			String weatherCode = prefs.getString("weather_code", ""); 
 			if (!TextUtils.isEmpty(weatherCode)) {    
 				queryWeatherInfo(weatherCode); 
 			}
-			break; 
-			
+			break; 			
 		default: 
 			break;
 		}
@@ -136,20 +134,21 @@ public class WeatherActivity extends Activity implements OnClickListener{
 			
 	private void queryFromServer(final String address,final String type) {
 		HttpUtil.sendHttpRequest (address,new HttpCallbackListener() {
+			
 			public void onFinish(final String response) {
 					if ("countyCode".equals(type)){
+						
 						if(!TextUtils.isEmpty(response)){
 							//从服务器返回的数据中解析出天气代号
 							String[] array = response.split("\\|");
-							if (array != null && array.length==2){
+							if (array != null && array.length == 2){
 								String weatherCode = array [1];
 								queryWeatherInfo(weatherCode);
 							}
 						}
 					}else if ("weatherCode".equals(type)){
 						//处理服务器返回的天气信息
-						Utility.handleWeatherResponse(WeatherActivity.this,
-				response);
+						Utility.handleWeatherResponse(WeatherActivity.this,response);
 						runOnUiThread(new Runnable() { 
 							public void run(){
 								showWeather();
@@ -159,10 +158,8 @@ public class WeatherActivity extends Activity implements OnClickListener{
 				}
 			public void onError(Exception e){
 				runOnUiThread(new Runnable(){
-					public void run (){
-							
-						
-							publishText.setText("同步失败");
+					public void run (){							
+						publishText.setText("同步失败");
 						}
 					});
 				}
@@ -175,7 +172,7 @@ public class WeatherActivity extends Activity implements OnClickListener{
 			 */
 			private void showWeather(){
 				SharedPreferences prefs = PreferenceManager.
-		getDefaultSharedPreferences(this);
+						getDefaultSharedPreferences(this);
 				cityNameText.setText( prefs.getString("city_name", "")); 
 				temp1Text.setText(prefs.getString("temp1", "")); 
 				temp2Text.setText(prefs.getString("temp2", "")); 
